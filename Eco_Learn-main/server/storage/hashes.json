@@ -1,0 +1,21 @@
+{
+  "students": {
+    "1": {
+      "images": [
+        {
+          "challenge_id": "1",
+          "filename": "20250928_132417_458950_Screenshot_2025-02-22_185500.png",
+          "relative_path": "1/challenge_1/20250928_132417_458950_Screenshot_2025-02-22_185500.png",
+          "url": "/uploads/1/challenge_1/20250928_132417_458950_Screenshot_2025-02-22_185500.png",
+          "uploaded_at": "20250928_132417_458950",
+          "hash": {
+            "aHash": "ff80808080808080",
+            "dHash": "222a1a1a2a28282a",
+            "pHash": "ffdd80c6809581bd",
+            "combined": "ff80808080808080222a1a1a2a28282affdd80c6809581bd"
+          }
+        }
+      ]
+    }
+  }
+}
