@@ -1,7 +1,9 @@
-// Service for uploading challenge proof images to local FastAPI backend
-// Assumes backend runs at http://localhost:8000
+// Service for uploading challenge proof images
+// Uses Vercel API routes in production, local development server otherwise
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_BASE || (
+  import.meta.env.PROD ? '/api' : 'http://localhost:8000'
+);
 
 export async function uploadChallengeProof({ studentId, challengeId, file }) {
   const formData = new FormData();

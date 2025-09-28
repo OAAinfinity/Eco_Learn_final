@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:abs": "npm --prefix \"C:\\Users\\kashi\\OneDrive\\Documents\\Eco_Learn-main[1]\\Eco_Learn-main\" run dev",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "vercel-build": "vite build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
