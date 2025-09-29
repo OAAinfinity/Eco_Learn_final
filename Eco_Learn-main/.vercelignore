@@ -1,0 +1,9 @@
+# Vercel ignore file
+server/
+.env.local
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.bolt/
+test-duplication.html

@@ -7,10 +7,6 @@
       "config": {
         "distDir": "dist"
       }
-    },
-    {
-      "src": "api/**/*.py",
-      "use": "@vercel/python"
     }
   ],
   "routes": [
@@ -22,10 +18,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "functions": {
-    "api/**/*.py": {
-      "runtime": "python3.9"
-    }
-  }
+  ]
 }

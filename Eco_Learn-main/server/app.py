@@ -5,7 +5,12 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from server.utils.image_hash import compute_combined_hash, is_duplicate
+
+# Add server directory to path for local imports
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+from utils.image_hash import compute_combined_hash, is_duplicate
 
 # FastAPI application setup
 app = FastAPI(title="Eco Learn Challenge Proof API", version="1.0.0")

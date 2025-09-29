@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duplication Detection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        input[type="file"] { margin: 10px 0; }
+        .result { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Duplication Detection Test</h1>
+    <p>This page tests the duplicate image detection functionality of your Eco Learn API.</p>
+    
+    <div class="test-section">
+        <h2>Manual Upload Test</h2>
+        <p>Select an image file and upload it twice to test duplicate detection:</p>
+        
+        <div>
+            <label for="student-id">Student ID:</label>
+            <input type="text" id="student-id" value="test_student_1" />
+        </div>
+        
+        <div>
+            <label for="challenge-id">Challenge ID:</label>
+            <input type="text" id="challenge-id" value="test_challenge_1" />
+        </div>
+        
+        <div>
+            <label for="file-input">Select Image:</label>
+            <input type="file" id="file-input" accept="image/*" />
+        </div>
+        
+        <button onclick="uploadFile()">Upload File</button>
+        <button onclick="uploadFile()">Upload Same File Again (Test Duplicate)</button>
+        <button onclick="checkStudentImages()">Check Student Images</button>
+        
+        <div id="upload-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>API Health Check</h2>
+        <button onclick="checkHealth()">Check API Health</button>
+        <div id="health-results"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://eco-learn-main-7xpr0kl7q-doosajkanishk-6316s-projects.vercel.app/api';
+        
+        async function uploadFile() {
+            const studentId = document.getElementById('student-id').value;
+            const challengeId = document.getElementById('challenge-id').value;
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showResult('upload-results', 'Please select a file first', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('student_id', studentId);
+            formData.append('challenge_id', challengeId);
+            formData.append('file', file);
+            
+            showResult('upload-results', 'Uploading...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/upload-challenge-proof`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('upload-results', 
+                        `✅ Upload successful: ${result.message}\\n` +
+                        `File: ${result.record.filename}\\n` +
+                        `Size: ${result.record.file_size} bytes\\n` +
+                        `Hash: ${result.record.hash.combined?.substring(0, 20)}...`, 
+                        'success');
+                } else {
+                    if (response.status === 409) {
+                        showResult('upload-results', 
+                            `🚫 Duplicate detected: ${result.error}`, 'error');
+                    } else {
+                        showResult('upload-results', 
+                            `❌ Upload failed: ${result.error}`, 'error');
+                    }
+                }
+            } catch (error) {
+                showResult('upload-results', 
+                    `❌ Network error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkStudentImages() {
+            const studentId = document.getElementById('student-id').value;
+            
+            showResult('upload-results', 'Fetching student images...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/student/${studentId}/images`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('upload-results', 
+                        `📊 Student has ${result.total_count} images:\\n` +
+                        result.images.map(img => 
+                            `- ${img.filename} (${img.challenge_id}) - ${img.uploaded_at}`
+                        ).join('\\n'), 
+                        'success');
+                } else {
+                    showResult('upload-results', 
+                        `❌ Failed to fetch images: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('upload-results', 
+                    `❌ Network error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkHealth() {
+            showResult('health-results', 'Checking API health...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('health-results', 
+                        `✅ API is healthy: ${result.message}`, 'success');
+                } else {
+                    showResult('health-results', 
+                        `❌ API health check failed`, 'error');
+                }
+            } catch (error) {
+                showResult('health-results', 
+                    `❌ Cannot connect to API: ${error.message}`, 'error');
+            }
+        }
+        
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${type}">${message.replace(/\\n/g, '<br>')}</div>`;
+        }
+        
+        // Auto-check health on page load
+        window.addEventListener('load', checkHealth);
+    </script>
+</body>
+</html>
